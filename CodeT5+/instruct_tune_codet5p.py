@@ -86,6 +86,7 @@ def run_training(args, model, train_data):
         local_rank=args.local_rank,
         deepspeed=args.deepspeed,
         fp16=args.fp16,
+        bf16 = True,
     )
 
     trainer = Trainer(
@@ -175,6 +176,11 @@ def main(args):
     model = AutoModelForSeq2SeqLM.from_pretrained(args.load, torch_dtype=torch.float16,
                                                   low_cpu_mem_usage=True, trust_remote_code=True)
 
+
+    # LoRA in action here !
+
+    # Print total trainable base vs. total trainable LoRA
+
     print(f"  ==> Loaded model from {args.load}, model size {model.num_parameters()}")
     freeze_decoder_except_xattn_codegen(model)
 
@@ -197,7 +203,7 @@ if __name__ == "__main__":
     parser.add_argument('--grad-acc-steps', default=16, type=int)
     parser.add_argument('--local_rank', default=-1, type=int)
     parser.add_argument('--deepspeed', default=None, type=str)
-    parser.add_argument('--fp16', default=False, action='store_true')
+    parser.add_argument('--fp16', default=True, action='store_true')
 
     # Logging and stuff
     parser.add_argument('--save-dir', default="saved_models/instruct_codet5p_6b", type=str)
