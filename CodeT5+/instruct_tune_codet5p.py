@@ -49,7 +49,7 @@ def freeze_decoder_except_xattn_codegen(model):
         if hasattr(each_decoder_layer, 'crossattention'):
             for param in each_decoder_layer.crossattention.parameters():
                 param.requires_grad = True
-            each_decoder_layer.crossattention.to(torch.float16)
+            each_decoder_layer.crossattention.to(torch.bfloat16)
 
         if hasattr(each_decoder_layer, 'alpha_xattn'):
             each_decoder_layer.alpha_xattn.requires_grad = True
@@ -173,7 +173,7 @@ def main(args):
         train_data = train_data.select([i for i in range(args.data_num)])
 
     # Load model from `args.load`
-    model = AutoModelForSeq2SeqLM.from_pretrained(args.load, torch_dtype=torch.float16,
+    model = AutoModelForSeq2SeqLM.from_pretrained(args.load, torch_dtype=torch.bfloat16,
                                                   low_cpu_mem_usage=True, trust_remote_code=True)
 
 
