@@ -49,7 +49,7 @@ def freeze_decoder_except_xattn_codegen(model):
         if hasattr(each_decoder_layer, 'crossattention'):
             for param in each_decoder_layer.crossattention.parameters():
                 param.requires_grad = True
-            each_decoder_layer.crossattention.to(torch.bfloat16)
+            each_decoder_layer.crossattention.to(torch.float16)
 
         if hasattr(each_decoder_layer, 'alpha_xattn'):
             each_decoder_layer.alpha_xattn.requires_grad = True
