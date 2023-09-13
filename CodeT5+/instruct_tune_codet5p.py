@@ -3,6 +3,10 @@ Finetune CodeT5+ models on instruction tuning data
 You can customize your own training data by following the HF dataset format to cache it to args.cache_data
 Author: Yue Wang
 Date: June 2023
+
+!wget https://raw.githubusercontent.com/google-research/google-research/master/mbpp/sanitized-mbpp.json
+!wget https://raw.githubusercontent.com/sahil280114/codealpaca/master/data/code_alpaca_20k.json
+
 """
 
 import os
@@ -110,10 +114,8 @@ def load_tokenize_data(args):
 
         def preprocess_function(examples):
             prompt_input, prompt_no_input = PROMPT_DICT["prompt_input"], PROMPT_DICT["prompt_no_input"]
-            source = [prompt_input.format_map({'instruction': instruct, 'input': inp}) if inp != ''
-                      else prompt_no_input.format_map({'instruction': instruct})
-                      for instruct, inp in zip(examples["instruction"], examples["input"])]
-            target = [src + output + tokenizer.eos_token for src, output in zip(source, examples["output"])]
+            source = [prompt_no_input.format_map({'instruction': instruct}) for instruct in examples["prompt"]]
+            target = [src + output + tokenizer.eos_token for src, output in zip(source, examples["code"])]
 
             model_inputs = tokenizer(source, max_length=args.max_len, padding="max_length", truncation=True)
             labels = tokenizer(target, max_length=args.max_len, padding="max_length", truncation=True)
@@ -183,9 +185,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="CodeT5+ instruction tuning")
     parser.add_argument('--data-num', default=-1, type=int)
     parser.add_argument('--max-len', default=512, type=int)
-    parser.add_argument('--instruct-data-path', default='code_alpaca_20k.json', type=str)
+    parser.add_argument('--instruct-data-path', default='sanitized-mbpp.json', type=str)
     parser.add_argument('--cache-data', default='cache_data/instructions', type=str)
-    parser.add_argument('--load', default='Salesforce/codet5p-16b', type=str)
+    parser.add_argument('--load', default='Salesforce/codet5p-6b', type=str)
 
     # Training
     parser.add_argument('--epochs', default=3, type=int)
@@ -198,7 +200,7 @@ if __name__ == "__main__":
     parser.add_argument('--fp16', default=False, action='store_true')
 
     # Logging and stuff
-    parser.add_argument('--save-dir', default="saved_models/instruct_codet5p_16b", type=str)
+    parser.add_argument('--save-dir', default="saved_models/instruct_codet5p_6b", type=str)
     parser.add_argument('--log-freq', default=10, type=int)
     parser.add_argument('--save-freq', default=500, type=int)
 
