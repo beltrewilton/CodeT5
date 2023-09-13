@@ -86,7 +86,7 @@ def run_training(args, model, train_data):
         local_rank=args.local_rank,
         deepspeed=args.deepspeed,
         fp16=args.fp16,
-        bf16 = True,
+        bf16 = False,
     )
 
     trainer = Trainer(
