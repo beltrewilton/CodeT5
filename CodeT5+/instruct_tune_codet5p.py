@@ -203,7 +203,7 @@ if __name__ == "__main__":
     parser.add_argument('--grad-acc-steps', default=16, type=int)
     parser.add_argument('--local_rank', default=-1, type=int)
     parser.add_argument('--deepspeed', default=None, type=str)
-    parser.add_argument('--fp16', default=True, action='store_true')
+    parser.add_argument('--fp16', default=False, action='store_true')
 
     # Logging and stuff
     parser.add_argument('--save-dir', default="saved_models/instruct_codet5p_6b", type=str)
