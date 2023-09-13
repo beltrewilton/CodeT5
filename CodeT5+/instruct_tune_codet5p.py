@@ -173,7 +173,7 @@ def main(args):
         train_data = train_data.select([i for i in range(args.data_num)])
 
     # Load model from `args.load`
-    model = AutoModelForSeq2SeqLM.from_pretrained(args.load, torch_dtype=torch.bfloat16,
+    model = AutoModelForSeq2SeqLM.from_pretrained(args.load, torch_dtype=torch.float16,
                                                   low_cpu_mem_usage=True, trust_remote_code=True)
 
 
